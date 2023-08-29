@@ -2,7 +2,7 @@ const express = require('express');
 const path = require('path');
 
 // Rutas
-const {usersRouter} = require('./routes/user.routers');
+const {usersRouter} = require('./app/routes/user.routers');
 
 const app = express();
 
@@ -16,7 +16,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'src', 'public')));
 
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, '../public', 'login.html'));
+    res.sendFile(path.join(__dirname, '../public', 'index.html'));
 });
 
 app.get('/register', (req, res) => {
