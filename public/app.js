@@ -192,7 +192,7 @@ const App = {
                 if (App.validarContraseña(data.password)) {
                     const user = App.analizarFormulario(data);
                     // Enviar los datos del usuario utilizando la función fetch
-                    fetch('https://yqycs5-5050.csb.app/mio', {
+                    fetch('https://yqycs5-5050.csb.app/submit', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
