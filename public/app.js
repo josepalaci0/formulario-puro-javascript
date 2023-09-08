@@ -59,7 +59,7 @@ const App = {
 
             if (data.name.length < 20 && data.password.length < 15) {
                 if (App.validarContraseña(data.password)) {
-                    const user = App.analizarFormulario(data);                    
+                    const user = App.analizarFormulario(data);
 
                     // Enviar los datos del usuario utilizando la función fetch
                     fetch('https://yqycs5-5050.csb.app/mio', {
@@ -172,10 +172,12 @@ const App = {
         form.appendChild(passworRepitedInput)
         form.appendChild(submitButton);
 
-        form.addEventListener("submit", (event) => {
+        form.addEventListener("submit", (event) => {       
+            App.startProgress()
+
             event.preventDefault();
             const data = {
-                name: nameInput.value,
+                username: nameInput.value,
                 email: emailInput.value,
                 password: passwordInput.value,
                 passworRepite: passworRepitedInput.value
@@ -184,25 +186,27 @@ const App = {
             if (data.passworRepite !== data.passworRepite) {
                 alert("La contraseña debe ser igual en ambos campos.");
             } if (
-                data.name.length <= 20 &&
+                data.username.length <= 20 &&
                 data.email.length <= 20 &&
                 data.password.length <= 15
             ) {
 
                 if (App.validarContraseña(data.password)) {
                     const user = App.analizarFormulario(data);
+                    
                     // Enviar los datos del usuario utilizando la función fetch
-                    fetch('https://yqycs5-5050.csb.app/submit', {
+                    fetch('https://kmwvng-4000.csb.app/api/v1/users', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
                         },
                         body: JSON.stringify(user)
+                    }).then(response => response.json()).then(data => {  
+                        const progressContainer = document.querySelector('.progress-container');
+                        progressContainer.style.display ='none'       
+                        App.notification(data.status)
+                        console.log('Respuesta del servidor:', data);
                     })
-                        .then(response => response.json())
-                        .then(data => {
-                            console.log('Respuesta del servidor:', data);
-                        })
                         .catch(error => {
                             console.error('Error al enviar los datos:', error);
                         });
@@ -217,9 +221,54 @@ const App = {
         });
 
 
-
         formContainerRegister.appendChild(form);
 
+    },
+    notification: (mensaje) => {
+        const notification = document.getElementById('notification');
+        const message = document.getElementById('notification-message');
+
+
+        message.innerText = mensaje;
+        if (mensaje !== 'success') {
+            notification.style.background = '#d32607d5'
+        }
+        notification.style.display = 'block';
+
+        // Agregar un temporizador para ocultar la notificación después de unos segundos (opcional)
+        setTimeout(() => {
+            App.ocultarNotificacion();
+        }, 5000); // Ocultar después de 5 segundos (puedes ajustar este valor)
+        
+    },
+    ocultarNotificacion: () => {
+        const notification = document.getElementById('notification');
+        notification.style.display = 'none';
+    },
+    startProgress:()=> {
+        const progressBar = document.querySelector('.progress-bar');
+        const progressContainer = document.querySelector('.progress-container');       
+        
+        // Número total de puntos (ajusta según tu necesidad)
+        const totalPoints = 10;
+        let currentPoint = 0;
+    
+        // Calcular el ancho de cada punto en porcentaje
+        const pointWidth = 100 / totalPoints;
+    
+        // Función para avanzar al siguiente punto
+        function nextPoint() {
+            currentPoint++;
+            if (currentPoint <= totalPoints) {
+                progressContainer.style.display ='block'
+                progressBar.style.width = (currentPoint * pointWidth) + '%';
+                setTimeout(nextPoint, 500); // Velocidad de progreso (500ms = 0.5 segundos)
+            }
+        }
+    
+        // Iniciar el progreso
+        nextPoint();
+
+        progressContainer.innerHTML=''
     }
 };
-
